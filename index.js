@@ -1,44 +1,68 @@
-function TreeNode(val) { //形成一棵树的结点
-    this.val = val;
-    this.left = this.right = null; //左指针， 右指针
-  }
-  //        1(root)
-  //    2       3
-  // 4     5  6    7
-  // 二叉树
-  var a1 = new TreeNode(1); //root 根结点
-  var a2 = new TreeNode(2);
-  var a3 = new TreeNode(3);   //一棵小树
-  a1.left = a2;
-  a1.right = a3;
-  // 2 它的子树？  形成是不是可以用递归的思想去形成?
-  var a4 = new TreeNode(4);
-  var a5 = new TreeNode(5);
-  a2.left = a4;
-  a2.right = a5;
-  var a6 = new TreeNode(6);
-  var a7 = new TreeNode(7);
-  a3.left = a6;
-  a3.right = a7;
-  // 一个结点， 左右指向另外两个结点   简单的事情, 
-  // 递归执行， 每个子结点 （左边， 右边）变成新的根结点， 
-  // 开叶散叶, 退出条件是 叶子结点
-  
-  // 如何打印我们的这棵树？ 1 2 4 5 3  6  7
-  // 面试里使用 递归的方法来写树的遍历做法 中序遍历
-  var inorderTraversal = function(root) {
-    //
-    let arr = []; //放结点结果的数组  树-> 数组
-    const inorder = root  => {
-      //  写什么
-      if (root === null) return null; //退出条件
-      inorder(root.left);
-      arr.push(root.val); //先进去了
-       //左子树一直递归
-      inorder(root.right);//右子树一直递归
+// 钱包
+//uuid库 npm i uuid,可以生成一个独一无二的id
+const UUID = require('uuid');
+//类的定义
+class Wallet{
+    constructor(){
+        // js对private支持不太友好所以我们都是使用编程的约定，私有的就加一个下划线，表示是不可改的
+        this._id=UUID.v1().replace(/-/g,"");//使用uuid返回用户id它是唯一的，加密生成的，是我们在后端开发中关于id生成的技能项
+        // vi是UUID的一方法，返回uuid的第一个版本的函数的调用，还有v4的，但比较短，可能会出现重复
+        //然后我们要把id之间的横杠去掉,用正则表达式，正则出来全局中所有的横杠，以空格代替横杠
+        // console.log(this.id);
+        this._createTime = +new Date(); //加一个+号变成微妙数便于存储，便于计算，在mysql中时间都是以long int存储
+        // console.log(this._createTime);
+        this._balance = 0 //金额 
+        this._balanceLastModifiedTime = +new Date();//上次金额修改时间
+
     }
-    inorder(root);
-    return arr; 
-  }
-  //中左右
-  console.log(inorderTraversal(a1));
+    //可读不可写，私有
+    getId(){
+        return this._id
+    }
+    getBalance(){
+        return this._balance;
+    }
+    getCreateTime(){ //不可以修改
+        return this._createTime;
+    }
+    getBalanceLastModifiedTime(){ //可以
+        return this._balanceLastModifiedTime;
+    }
+    //参数就是要加的数量
+    increaseBalance(increasedAmount){
+        //先去check一下increaseAmount是不是一个正确的钱数
+        //封装
+        if (increasedAmount < 0) {
+            throw new Error('错误的金额')
+          } 
+        this._balance += increasedAmount;
+        this._balanceLastModifiedTime = + new Date();
+    }
+     //花钱
+    decreaseBalance(decreasedAmount) {
+        if (decreasedAmount > this._balance) { //可以花
+        throw new Error('没有足够的钱');
+        }
+        this._balance -= decreasedAmount;
+    }
+    
+}
+//钱包类
+//钱就是一串数字 区块链 （比特币就是区块链的一种实现） 一串不可改变的数字
+//区块链是好比是一个账本，一个不可改变（改写）的账本
+// 1.每个人的钱包，要有一个不可变的id
+// 钱是一串数字，是可以改变的，钱为什么属于你？用钱包id
+const jayWallet = new Wallet();//实例化运行一下
+//类的使用
+// jayWallet._id='aaa';//此时这里的id可以被随意修改，这是不可以的，怎么解决？private
+// console.log(jayWallet.id);//id象征什么？，来到readme.md
+console.log(jayWallet.getId());
+// jayWallet._balance='aaa';直接这样改是不可以的
+// 收到红包
+jayWallet.increaseBalance(20);
+// console.log(jayWallet.getBalance(), jayWallet.getBalanceLastModifiedTime());
+jayWallet.decreaseBalance(10);
+console.log(jayWallet.getBalance());
+
+jayWallet._id = 'aaa';
+console.log(jayWallet.getId());
