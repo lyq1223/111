@@ -1,99 +1,71 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import api from '@/api/index.js'
+// Player类，每个都可以实例化
+function Player(name,teamColor){
+    this.enemies=[];//敌人
+    this.partners=[];//队友
+    this.name=name;
+    this.teamColor=teamColor;
+    this.state='live';
+}
+Player.prototype.win=function(){
+    //kill all
+    console.log(`${this.name} win`);
+}
+Player.prototype.lose=function(){
+    console.log(`${this.name} lose`);
+}
+Player.prototype.die=function(){
+    console.log(`${this.name} die`);
+    this.state='die';
+    let all_dead=true;//假设一开始都死了，这样就可以少定义一个
+    for(var i=0,partner;partner=this.partners[i++];){
+        // 统计队员die的数量，与成员总数作比较
+        if(partner.state==='live')
+        {
+            all_dead=false;
+            break;
+        }
+    }
+    if(all_dead){
+        for(var i=0,partner;partner=this.partners[i++];)
+        {
+            partner.lose();//每个队友都提醒，输了
+        }
+        for(var i=0,enemy;enemy=this.enemies[i++];)
+        {
+            enemy.win();
+        }
+    }
+}
+//组队，开启游戏。队内成员teamColor一样
+// 要生成玩家，玩家由工厂类来负责
+var players=[];
+var playerFactory=function(name,teamColor){
+    var newPlayer=new Player(name,teamColor);//实例化
+    for(var i=0,player;player=players[i++];)
+    {
+        if(player.teamColor===newPlayer.teamColor){
+            player.partners.push(newPlayer);
+            newPlayer.partners.push(player);
+        }else{
+            player.enemies.push(newPlayer);
+            newPlayer.enemies.push(player);
+        }
+    }
+    players.push(newPlayer);
+    return newPlayer;
+}
+var player1=playerFactory('小刚','red');
+var player2=playerFactory('小明','red');
+var player3=playerFactory('小红','red');
+var player4=playerFactory('小强','red');
+// 队友是谁，敌人是谁？由工厂分配 
+var player5=playerFactory('胡强','blue');
+var player6=playerFactory('胡头','blue');
+var player7=playerFactory('胡草','blue');
+var player8=playerFactory('胡乱','blue');
+// console.log(player1.partners,player1.enemies);
+player1.die();
+player2.die();
+player3.die();
+player4.die();
 
-Vue.use(Vuex)
-// 单一状态树  单一?  树？
-export default new Vuex.Store({
-  state: {
-    users: [
-      // {
-      //   "address": {
-      //     "city": "Los Angeles",
-      //     "state": 'California',
-      //     "pincode": "123"
-      //   },
-      //   "tags": [
-      //     "music",
-      //     "blogs",
-      //     "cricket"
-      //   ],
-      //   "name": "Tom Benzamin"
-      // },
-      // {
-      //   "address": {
-      //     "city": "赣州",
-      //     "state": '江西',
-      //     "pincode": "331000"
-      //   },
-      //   "tags": [
-      //     "coding",
-      //     "blogs"
-      //   ],
-      //   "name": "王志浩"
-      // },
-      // {
-      //   "address": {
-      //     "city": "九江",
-      //     "state": '江西',
-      //     "pincode": "331000"
-      //   },
-      //   "tags": [
-      //     "coding",
-      //     "swim"
-      //   ],
-      //   "name": "刘子民"
-      // },
-      //  {
-      //   "address": {
-      //     "city": "赣州",
-      //     "state": '江西',
-      //     "pincode": "331000"
-      //   },
-      //   "tags": [
-      //     "coding",
-      //     "games"
-      //   ],
-      //   "name": "衷从海"
-      // }
-    ]
-  },
-  mutations: {
-    setUsers(state, payload) { // 写操作 唯一地方
-      state.users = payload
-    }
-  },
-  actions: { // 负责数据的请求 写入状态的第一步 但不能直接改，可以去提交一个mutation,z这里只是一个动作可以请求api,但不能直接修改状态
-    // 负责跟api 通信的地方`
-    fetchUsers(context) { //方法，传的也只是context上下文环境参数
-      api 
-        .fetchUsers((users)=> { //封装一个方法，传一个回调
-          // console.log(users);
-          // 写入state,   严格一些 就像开账单，写一个条子 按流程来
-          context.commit('setUsers', users)
-        })
-    },
-    queryTag(context,evt) { //evt会在change发生时拿到change对象
-      const tag = evt.target.value;
-      // console.log(evt);
-      // console.log(tag);
-      api  //在api中提供这个
-        .fetchUsersByTag(tag, (users)=>{
-          context.commit('setUsers',users) //修改
-        })
-    }
-  },
-  getters: {  // state computed 函数 数据需要进行处理时就加这个
-    getUsers(state) { // vuex这个api 会给getter函数state这个形参  读操作 第二种方法获取状态树的数据
-      // return state.users
-      // 做一个变形
-      // return state.users.map((user, index) => {
-      //   user.id = user.address.pincode + index //邮箱地址+邮政编码+index
-      //   return user //map之后要return一个新user
-      // })
-      return state.users
-    }
-  },
-  modules: {
-  }
-})
