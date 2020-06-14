@@ -3,9 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>支付部门</title>
+    <title>Document</title>
 </head>
 <body>
-    <div id="app"></div>
+    <!-- 一个网站上会有些什么 图片 -->
+    <img src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2473690265,2444464417&fm=26&gp=0.jpg" alt="">
+    <img src="./sw-lifecycle.png" alt="">
+    <script>
+        // 使用serviceWorker要完全按照他的流程来
+        // 1.安装它register 安装的是一个js文件
+        // 可以绑定状态变化的事件，我们直接输出一下好了
+        // 都是Promise风格
+        // 安装的时候检测一下先，
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./servicew.js', {scope: './'}) //限制生效范围，当前整个这个网站都能生效
+            .then(function(work) { //是他给我们的对象，有一些事件可以暴露出来供我们使用
+                console.log('sw完成');
+            })
+            .catch(function(err) {
+                console.log('sw失败', err);
+            })
+        }
+        // 来到service-worker流程
+    </script>
 </body>
 </html>
