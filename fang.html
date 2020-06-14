@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var saleOffices={
+            name:'万科润园'
+        };
+        //发布售房信息
+        // 多个事件订阅时，saleOffices是个发布者
+        saleOffices.clientList=[];//订阅者
+        //生成发布订阅的关系
+        saleOffices.listen=function(fn){
+            this.clientList.push(fn);
+        }
+        saleOffices.trigger=function(price,squareMeter){
+            for(var i=0,fn;fn=this.clientList[i++];)
+            {
+                // fn(this.name,price,squareMeter);不增加字段怎么拿name?
+                fn.apply(this,arguments)//这个内部的this会指向saleOffices对象 apply是类call的
+                // arguments是所有的将要得到的参数
+                // fn.call(this,...arguments);
+            }
+        }
+        saleOffices.listen(function(price,squareMeter)
+        {   
+            console.log('小红订阅了');
+            //console.log('楼盘名='+name);不增加字段怎么拿name?
+            console.log('楼盘名='+this.name);//用了apply或call
+            console.log('价格='+price);
+            console.log('squareMeter='+squareMeter);
+        })
+        saleOffices.listen(function(price,squareMeter){
+            console.log('小明订阅了');
+            console.log('楼盘名='+this.name);
+            console.log('价格='+price);
+            console.log('squareMeter='+squareMeter);
+        })
+        saleOffices.trigger(20000,88);
+        //五秒之后
+        setTimeout(()=>{
+            saleOffices.trigger(24000,110);
+        },5000)
+        </script>
+</body>
+</html>
