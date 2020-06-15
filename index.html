@@ -4,22 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>DOM事件</title>
-    <style>
-        /* 不加的话会不显示 */
-    html,body{
-        height: 100vh;
-    }
-    </style>
+    <title>Document</title>
 </head>
 <body>
     <script>
-        document.body.addEventListener('click',function(){
-            alert(1);
-        });
-        document.body.addEventListener('click',function(){
-            alert(2);
-        })
-        </script>
+        // 灯的状态
+        var Light=function(){
+            this.state='off';
+            this.button=null;
+        }
+        Light.prototype.init=function(){
+            var button=document.createElement('button');
+            button.innerHTML='开关';
+            this.button=document.body.appendChild(button);
+            this.button.addEventListener('click',() =>{
+                this.buttonWasPressed();
+
+            })
+        }
+        Light.prototype.buttonWasPressed=function(){
+            if(this.state=='off'){
+                this.state='on';
+                console.log('灯开了');
+            }else {
+                this.state='off';
+                console.log('灯关了');
+            }
+        }
+        var light=new Light();
+        light.init();
+    </script>
 </body>
 </html>
