@@ -1,87 +1,16 @@
-// a
-function match(string) {
-  for (let c of string) {
-    if (c === 'a') return true;
-  }
-  return false;
-}
-// ab
-function matchAb(string) {
-  let foundA = false;
-  for (let c of string) {
-    if (c === 'a') {
-      foundA = true;
-    } else if (foundA && c === 'b') {
-      return true;
-    } else {
-      // 重新开始 匹配 ab  foundA 失效了
-      foundA = false;
+var lengthOfLongestSubstring = function(s) {
+    let arr = [], max = 0;
+    for(let i = 0; i < s.length; i++) {
+        let index = arr.indexOf(s[i]); //没有就返回-1，有就返回下标
+        if(index !== -1) {
+            //把前面的删掉，便于重新计算长度
+            // 删掉重复的及前面的
+            arr.splice(0, index+1);
+        }
+        // 把没重复的，也就是当前遍历的下标为i的字符串存进去
+        arr.push(s.charAt(i));
+        max = Math.max(max, arr.length);
     }
-  }
-  return false;
-}
-console.log(matchAb('acbab'))
-// abcdef
-function matchAbcdef(string) {
-  let foundA = false;
-  let foundB = false;
-  let foundC = false;
-  let foundD = false;
-  let foundE = false;
-  for (let c of string) {
-    if (c === 'a') {
-      foundA = true;
-    } else if (foundA && c === 'b') {
-      foundB = true;
-    } else if (foundB && c === 'c') {
-      foundC = true;
-    } else if (foundC && c === 'd') {
-      foundD = true;
-    } else if (foundD && c === 'e') {
-      foundE = true;
-    } else if (foundE && c === 'f') {
-      return true;
-    } else {
-      // 重新开始 匹配 ab  foundA 失效了
-      foundA = false;
-      foundB = false;
-      foundC = false;
-      foundD = false;
-      foundE = false;
-    }
-  }
-  return false;
-}
-// abc
-function newMatch(string) {
-  let state = foundA;
-  for (let c of string) {
-    state = state(c)
-  }
-  return state === end
-}
-function foundA(c) {
-  if (c === 'a') {
-    return foundB;
-  } else {
-    return foundA;
-  }
-}
-function foundB(c) {
-  if (c === 'b') {
-    return foundC;
-  } else {
-    return foundA;
-  }
-}
-function foundC(c) {
-  if (c === 'c') {
-    return end;
-  } else {
-    return foundA;
-  }
-}
-function end() {
-  return end
-}
-console.log(newMatch('abcbacbc'))
+    return max;
+};
+console.log(lengthOfLongestSubstring('asasas'));
