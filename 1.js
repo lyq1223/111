@@ -1,16 +1,17 @@
-var lengthOfLongestSubstring = function(s) {
-    let arr = [], max = 0;
-    for(let i = 0; i < s.length; i++) {
-        let index = arr.indexOf(s[i]); //没有就返回-1，有就返回下标
-        if(index !== -1) {
-            //把前面的删掉，便于重新计算长度
-            // 删掉重复的及前面的
-            arr.splice(0, index+1);
-        }
-        // 把没重复的，也就是当前遍历的下标为i的字符串存进去
-        arr.push(s.charAt(i));
-        max = Math.max(max, arr.length);
+var myAtoi = function(str) {
+   
+    // parseInt(string, radix)   将一个字符串 string 转换为 radix 进制的整数， radix 为介于2-36之间的数。
+    const result = parseInt(str, 10)
+    //如果是字符串开头，parseInt会返回NaN 所以要先判断是否是NaN,是就返回0
+    if(isNaN(result)) {
+        return 0;
+    } else if(result < Math.pow(-2,31)) {  //Math.pow可以求几次方:-2^31
+        return Math.pow(-2,31);
+    } else if(result > Math.pow(2, 31)-1) {
+        return Math.pow(2, 31)-1;
     }
-    return max;
+    return result;
 };
-console.log(lengthOfLongestSubstring('asasas'));
+console.log(myAtoi("4193 with words"));
+console.log(myAtoi("-91283472332"));
+console.log(myAtoi("words and 987"));
