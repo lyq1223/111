@@ -1,26 +1,16 @@
-var trap = function(height) {
-    let countsum = 0;     
-    height.forEach((item, index) => {
-        let left = 0, right = 0;
-        for(var i = 0; i <= index; i++) {  //0->0,1->0,1,2->0,1,2,3->...->0,1,...,8
-            // console.log(i);
-            left = Math.max(height[i], left)
-            // console.log(left,'======')
+var jump = function(nums) {
+    // 贪心算法，反向查找出发位置
+    let step = 0;
+    let position = nums.length - 1;
+    while(position) {
+        for(let i = 0; i < position; i++) {
+            if((i + nums[i]) >= position) {
+                position = i;
+                step++;
+                break;
+            }
         }
-        for (var i = index; i < height.length; i++) { //0->1->2->...->8
-            // console.log(i);
-            right = Math.max(height[i], right)
-            // console.log(right,'======')
-        }
-        // console.log(left,right);// 每轮的加起来
-        countsum +=Math.min(left, right) -item
-    });
-    
-    // return left;
-    return countsum
+    }
+    return step;
 };
-// console.log(trap([0,1,0,2,1,0,1,3,2,1,2,1]));
-// console.log(trap([1,0,1]));
-console.log(trap([2, 0, 2, 3, 2, 2, 2, 1, 2]));
-
-
+console.log(jump([2,3,1,1,4]));
